@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { LogOut } from "./Services/Auth/apis";
 import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 function Header() {
@@ -42,7 +42,7 @@ function Header() {
               href="#"
               aria-label="Brand"
             >
-              Cine App
+              Cinesnopolis
             </a>
             <div className="md:hidden">
               <button
@@ -93,31 +93,31 @@ function Header() {
             <div className="flex flex-col gap-y-4 gap-x-0 mt-5 md:flex-row md:items-center md:justify-end md:gap-y-0 md:gap-x-7 md:mt-0 md:ps-7">
               <a
                 className="font-medium text-blue-600 md:py-6 dark:text-blue-500"
-                href="#"
+                href="/Inicio"
                 aria-current="page"
               >
                 Inicio
               </a>
-              <a
+              {/* <a
                 className="font-medium text-gray-500 hover:text-gray-400 md:py-6 dark:text-gray-400 dark:hover:text-gray-500"
                 href="#"
               >
                 Compras
-              </a>
-              <a
+              </a> */}
+              {/* <a
                 className="font-medium text-gray-500 hover:text-gray-400 md:py-6 dark:text-gray-400 dark:hover:text-gray-500"
                 href="#"
               >
                 Work
-              </a>
-              <a
+              </a> */}
+              <Link
                 className="font-medium text-gray-500 hover:text-gray-400 md:py-6 dark:text-gray-400 dark:hover:text-gray-500"
-                href="#"
+                to="/Dashboard"
               >
-                Blog
-              </a>
+                Dashboard
+              </Link>
 
-              <div className="hs-dropdown [--strategy:static] md:[--strategy:fixed] [--adaptive:none] md:[--trigger:hover] md:py-4">
+              {/* <div className="hs-dropdown [--strategy:static] md:[--strategy:fixed] [--adaptive:none] md:[--trigger:hover] md:py-4">
                 <button
                   type="button"
                   className="flex items-center w-full text-gray-500 hover:text-gray-400 font-medium dark:text-gray-400 dark:hover:text-gray-500 "
@@ -203,7 +203,7 @@ function Header() {
                     Team Account
                   </a>
                 </div>
-              </div>
+              </div> */}
 
               <button
                 className="flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 md:border-s md:border-gray-300 md:my-6 md:ps-6 dark:border-gray-700 dark:text-gray-400 dark:hover:text-blue-500"

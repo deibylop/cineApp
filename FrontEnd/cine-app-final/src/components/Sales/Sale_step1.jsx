@@ -1,401 +1,173 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getHorarios } from "../../Services/Main/ApiMovies";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLocation, Link } from "react-router-dom";
+import Header from "../../header";
 
 function Step1() {
+  let { state } = useLocation();
+  const movie = state?.selectedMovie;
+  const [showToast, setShowToast] = useState(false);
+  const [selectedSalaId, setSelectedSalaId] = useState(null);
+  const [cantidad, setCantidad] = useState(1); // Inicializa la cantidad en 1
+  const monto = cantidad * 4.75; // Multiplica la cantidad por el precio
+
+  const handleSeleccionarSala = (salaId) => {
+    setSelectedSalaId(salaId);
+  };
+
+  console.log(movie);
+  const [dataMovie, setDataMovie] = useState({
+    values: {
+      titulo: "",
+      descripcion: "",
+      genero: "",
+      fecha: "",
+    },
+  });
+  const [selectedGenero, setSelectedGenero] = useState("");
+  const [moviesGeneros, setMoviesGeneros] = useState([]);
+
+  const [horarios, setHorarios] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await getHorarios(movie.id);
+      if (response) {
+        setHorarios(response.Data);
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error cargando las peliculas:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (movie) {
+      setDataMovie({
+        values: {
+          titulo: movie.titulo,
+          descripcion: movie.descripcion,
+          genero: movie.genero,
+          fecha: movie.fecha_estreno,
+          status: movie.status,
+          id: movie.id,
+          url_imagen: movie.url_imagen,
+        },
+      });
+    }
+    getData();
+  }, [movie]);
   return (
     <>
+      <Header />
       <div className="bg-white">
         <div className="pt-6">
-          {/* <nav aria-label="Breadcrumb">
-            <ol
-              role="list"
-              className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8"
-            >
-              <li>
-                <div className="flex items-center">
-                  <a href="#" className="mr-2 text-sm font-medium text-gray-900">
-                    Men
-                  </a>
-                  <svg
-                    width="16"
-                    height="20"
-                    viewBox="0 0 16 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    className="h-5 w-4 text-gray-300"
-                  >
-                    <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                  </svg>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <a href="#" className="mr-2 text-sm font-medium text-gray-900">
-                    Clothing
-                  </a>
-                  <svg
-                    width="16"
-                    height="20"
-                    viewBox="0 0 16 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    className="h-5 w-4 text-gray-300"
-                  >
-                    <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                  </svg>
-                </div>
-              </li>
-
-              <li className="text-sm">
-                <a
-                  href="#"
-                  aria-current="page"
-                  className="font-medium text-gray-500 hover:text-gray-600"
-                >
-                  Basic Tee 6-Pack
-                </a>
-              </li>
-            </ol>
-          </nav> */}
-
           <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
-            
-            {/* <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
-              <img
-                src="https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg"
-                alt="Two each of gray, white, and black shirts laying flat."
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
-            <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
-              <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                <img
-                  src="https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg"
-                  alt="Model wearing plain black basic tee."
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
-              <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                <img
-                  src="https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg"
-                  alt="Model wearing plain gray basic tee."
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
-            </div> */}
             <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
               <img
-                src="https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg"
+                src={movie.url_imagen}
                 alt="Model wearing plain white basic tee."
                 className="h-full w-full object-cover object-center"
               />
             </div>
 
             <div className="mt-6">
-            <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                Basic Tee 6-Pack
-              </h1>
-            </div>
-
-            <div className="mt-4 lg:row-span-3 lg:mt-0">
-              <h2 className="sr-only">Product information</h2>
-
-              <div className="space-y-6">
-                <br /> <br />
-                  <p className="text-base text-gray-900 text-justify">
-                    The Basic Tee 6-Pack allows you to fully express your
-                    vibrant personality with three grayscale options. Feeling
-                    adventurous? Put on a heather gray tee. Want to be a
-                    trendsetter? Try our exclusive colorway: &quot;Black&quot;.
-                    Need to add an extra pop of color to your outfit? Our white
-                    tee has you covered.
-                  </p>
-                </div>  
-            </div>
+              <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                  {movie.titulo}
+                </h1>
               </div>
 
-              <form className="mt-10">
-                {/* <div>
-                  <h3 className="text-sm font-medium text-gray-900">Color</h3>
+              <div className="mt-4 lg:row-span-3 lg:mt-0">
+                <h2 className="sr-only">Product information</h2>
 
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a color</legend>
-                    <div className="flex items-center space-x-3">
-                      <label className="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none ring-gray-400">
-                        <input
-                          type="radio"
-                          name="color-choice"
-                          value="White"
-                          className="sr-only"
-                          aria-labelledby="color-choice-0-label"
-                        />
-                        <span id="color-choice-0-label" className="sr-only">
-                          White
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="h-8 w-8 bg-white rounded-full border border-black border-opacity-10"
-                        ></span>
-                      </label>
+                <div className="space-y-6">
+                  <br /> <br />
+                  <p className="text-base text-gray-900 text-justify">
+                    {movie.descripcion}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-                      <label className="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none ring-gray-400">
-                        <input
-                          type="radio"
-                          name="color-choice"
-                          value="Gray"
-                          className="sr-only"
-                          aria-labelledby="color-choice-1-label"
-                        />
-                        <span id="color-choice-1-label" className="sr-only">
-                          Gray
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="h-8 w-8 bg-gray-200 rounded-full border border-black border-opacity-10"
-                        ></span>
-                      </label>
-
-                      <label className="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none ring-gray-900">
-                        <input
-                          type="radio"
-                          name="color-choice"
-                          value="Black"
-                          className="sr-only"
-                          aria-labelledby="color-choice-2-label"
-                        />
-                        <span id="color-choice-2-label" className="sr-only">
-                          Black
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="h-8 w-8 bg-gray-900 rounded-full border border-black border-opacity-10"
-                        ></span>
-                      </label>
-                    </div>
-                  </fieldset>
-                </div> */}
-
-                <div className="mt-10">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-gray-900">Horarios</h3>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      Elegir horario
-                    </a>
-                  </div>
+            <form className="mt-10">
+              <div className="mt-10">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-gray-900">
+                    Horarios
+                  </h3>
+                  <a className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                    Elegir horario
+                  </a>
+                </div>
                 {/* DATOS DE FECHAS */}
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-not-allowed bg-gray-50 text-gray-200">
-                        <input
-                        type="radio"
-                        name="size-choice"
-                        value="XXS"
-                        className="sr-only"
-                        aria-labelledby="size-choice-1-label"
-                        />
-                        <span id="size-choice-0-label">XXS</span>
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
-                        >
-                          <svg
-                            className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
-                            viewBox="0 0 100 100"
-                            preserveAspectRatio="none"
-                            stroke="currentColor"
-                          >
-                            <line
-                              x1="0"
-                              y1="100"
-                              x2="100"
-                              y2="0"
-                            //   vector-effect="non-scaling-stroke"
-                            />
-                          </svg>
-                        </span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
+                <fieldset className="mt-4">
+                  <legend className="sr-only"></legend>
+                  <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+                    {horarios.map((horarios) => (
+                      <label
+                        className={`group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer ${
+                          selectedSalaId === horarios.id
+                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                            : ""
+                        }`}
+                      >
                         <input
                           type="radio"
                           name="size-choice"
                           value="XS"
                           className="sr-only"
                           aria-labelledby="size-choice-1-label"
+                          onChange={() => handleSeleccionarSala(horarios.id)}
                         />
-                        <span id="size-choice-1-label">XS</span>
+                        <span id="size-choice-1-label">{horarios.hora}</span>
 
                         <span
                           className="pointer-events-none absolute -inset-px rounded-md"
                           aria-hidden="true"
                         ></span>
                       </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="S"
-                          className="sr-only"
-                          aria-labelledby="size-choice-2-label"
-                        />
-                        <span id="size-choice-2-label">S</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-bold text-gray-900">
+                      Monto: ${monto.toFixed(2)}
+                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      className="py-2 px-3 rounded-md border border-gray-200 shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      id="cantidad-input"
+                      onChange={(e) => setCantidad(parseInt(e.target.value))}
+                    />
+                  </div>
+                </fieldset>
+              </div>
 
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="M"
-                          className="sr-only"
-                          aria-labelledby="size-choice-3-label"
-                        />
-                        <span id="size-choice-3-label">M</span>
-
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="L"
-                          className="sr-only"
-                          aria-labelledby="size-choice-4-label"
-                        />
-                        <span id="size-choice-4-label">L</span>
-
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="XL"
-                          className="sr-only"
-                          aria-labelledby="size-choice-5-label"
-                        />
-                        <span id="size-choice-5-label">XL</span>
-
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="2XL"
-                          className="sr-only"
-                          aria-labelledby="size-choice-6-label"
-                        />
-                        <span id="size-choice-6-label">2XL</span>
-
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                      <label className="group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6 cursor-pointer bg-white text-gray-900 shadow-sm">
-                        <input
-                          type="radio"
-                          name="size-choice"
-                          value="3XL"
-                          className="sr-only"
-                          aria-labelledby="size-choice-7-label"
-                        />
-                        <span id="size-choice-7-label">3XL</span>
-
-                        <span
-                          className="pointer-events-none absolute -inset-px rounded-md"
-                          aria-hidden="true"
-                        ></span>
-                      </label>
-                    </div>
-                  </fieldset>
-                </div>
-
-                <button
-                  type="submit"
-                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  COMPRAR
-                </button>
-              </form>
+              <Link
+                state={{
+                  selectedSala: selectedSalaId,
+                  movie: dataMovie.values,
+                  monto: monto.toFixed(2)
+                }}
+                disabled={!selectedSalaId || !cantidad} // Deshabilita si no hay sala o cantidad seleccionada
+                type="submit"
+                to="/Step2"
+                className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white ${
+                  selectedSalaId
+                    ? "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                Siguiente
+              </Link>
+            </form>
           </div>
 
-          <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
-            
-
-            {/* <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">
-              <div>
-                <h3 className="sr-only">Description</h3>
-
-                <div className="space-y-6">
-                  <p className="text-base text-gray-900">
-                    The Basic Tee 6-Pack allows you to fully express your
-                    vibrant personality with three grayscale options. Feeling
-                    adventurous? Put on a heather gray tee. Want to be a
-                    trendsetter? Try our exclusive colorway: &quot;Black&quot;.
-                    Need to add an extra pop of color to your outfit? Our white
-                    tee has you covered.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-10">
-                <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
-
-                <div className="mt-4">
-                  <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
-                    <li className="text-gray-400">
-                      <span className="text-gray-600">
-                        Hand cut and sewn locally
-                      </span>
-                    </li>
-                    <li className="text-gray-400">
-                      <span className="text-gray-600">
-                        Dyed with our proprietary colors
-                      </span>
-                    </li>
-                    <li className="text-gray-400">
-                      <span className="text-gray-600">
-                        Pre-washed &amp; pre-shrunk
-                      </span>
-                    </li>
-                    <li className="text-gray-400">
-                      <span className="text-gray-600">Ultra-soft 100% cotton</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="mt-10">
-                <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
-                <div className="mt-4 space-y-6">
-                  <p className="text-sm text-gray-600">
-                    The 6-Pack includes two black, two white, and two heather
-                    gray Basic Tees. Sign up for our subscription service and be
-                    the first to get new, exciting colors, like our upcoming
-                    &quot;Charcoal Gray&quot; limited release.
-                  </p>
-                </div>
-              </div>
-            </div> */}
-          </div>
+          <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16"></div>
         </div>
       </div>
     </>

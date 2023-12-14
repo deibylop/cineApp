@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 // import * as jwt from "jsonwebtoken";
 
 const ProtectedRoutes = ({ canActivate, redirectPath = "/" }) => {
-    // const decodedToken = jwtDecode(canActivate, "Llave maestra de JWT");
-    // console.log("TOKEN",decodedToken)
-  if (!canActivate) {
+  const user = sessionStorage.getItem("token");
+  console.log("session",user);
+  if (!user) {
     return <Navigate to={redirectPath} replace />
   }
   return <Outlet />

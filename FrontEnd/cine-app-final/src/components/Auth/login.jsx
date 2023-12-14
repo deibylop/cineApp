@@ -6,11 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [showToast, setShowToast] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [form, setForm] = useState({ values: { email: "", password: "" } });
   const Navigate = useNavigate();
-  const handleClick = () => {
-  };
 
   const handleEmailChange = (event) => {
     setForm({ values: { ...form.values, email: event.target.value } });
@@ -39,9 +36,10 @@ function Login() {
       return;
     }
     if (response.cod_error == 200) {
+      sessionStorage.setItem("token", response.token.rol_id);
       console.log("success");
-      sessionStorage.setItem("token", response.token);
       Navigate('/Inicio');
+      
     } else {
       setShowToast(true);
       console.log("Fail");

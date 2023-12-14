@@ -1,6 +1,7 @@
 <?php
+
 use Firebase\JWT\JWT;
-    
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
@@ -19,7 +20,7 @@ if (isset($requestData['procedure_id'])) {
     $params = isset($requestData['params']) ? $requestData['params'] : array();
     $result = callStoredProcedure($procedureId, $params);
     http_response_code(200);
-    echo($result);
+    echo ($result);
 } else {
     echo json_encode(array('error' => 'Identificador del procedimiento almacenado no válido.'));
 }
@@ -32,17 +33,63 @@ function callStoredProcedure($procedureId, $params)
     try {
         switch ($procedureId) {
             case 1:
-                $movies = new Movies($db); 
-                $results = $movies->consultarPeliculasDisponibles();
-                $token = JWT::encode($results, JWT_KEY,'HS256');
-                list($headersB64, $payloadB64, $sig) = explode('.', $token);
-                $decoded = json_decode(base64_decode($headersB64), true);
-
-                return json_encode($decoded);
-                }
+                $movies = new Movies($db);
+                $results = $movies->getAllMovies();
+                return json_encode($results);
+            case 2:
+                $movies = new Movies($db);
+                $results = $movies->getAllSalas();
+                return json_encode($results);
+            case 3:
+                $movies = new Movies($db);
+                $results = $movies->getAllHorarios($params['id']);
+                return json_encode($results);
+            case 4:
+                $movies = new Movies($db);
+                $results = $movies->getAllAsientos();
+                return json_encode($results);
+            case 5:
+                $movies = new Movies($db);
+                $results = $movies->getAllGeneros();
+                return json_encode($results);
+            case 6:
+                $movies = new Movies($db);
+                $results = $movies->insertNewMovie($params['titulo'], $params['descripcion'], $params['genero'], $params['fecha'], $params['movieImg']);
+                return json_encode(array("cod_error" => 200));
+            case 7:
+                $movies = new Movies($db);
+                $results = $movies->udpateMovie($params['id'], $params['titulo'], $params['descripcion'], $params['genero'], $params['fecha'], $params['movieImg'], $params['status']);
+                return json_encode(array("cod_error" => 200));
+            case 8:
+                $movies = new Movies($db);
+                $results = $movies->deleteMovie($params['id']);
+                return json_encode(array("cod_error" => 200));
+            case 9:
+                $movies = new Movies($db);
+                $results = $movies->getAllHorarios($params['id']);
+                return json_encode(array("Data" => $results));
+            case 10:
+                $movies = new Movies($db);
+                $results = $movies->getCurrentSala($params['id']);
+                return json_encode(array("Data" => $results));
+            case 11:
+                $movies = new Movies($db);
+                $results = $movies->paymentService(
+                    $params['billingAddress'],
+                    $params['aptSuite'],
+                    $params['zipCode'],
+                    $params['provincia'],
+                    $params['cardName'],
+                    $params['cardNumber'],
+                    $params['expirationDate'],
+                    $params['cvvCode'],
+                    $params['movie'],
+                    $params['asientos'],
+                    $params['amount']
+                );
+                return json_encode(array("Data" => $results,"cod_error" => 200));
+        }
     } catch (Exception $e) {
         return json_encode(array('error' => $e->getMessage()));
     }
 }
-
-?>

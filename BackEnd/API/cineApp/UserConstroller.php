@@ -37,13 +37,8 @@ function callStoredProcedure($procedureId, $params)
                 $users = new Users($db);
                 $hashedPassword = md5($params['password']);
                 $results = $users->loginUsuario($params['email'], $hashedPassword);
-                if ($results) {
-                    $token = JWT::encode($results, JWT_KEY, 'HS256');
-                    return json_encode(array("token" => $token,"cod_error"=>200));
-                } else {
-                    onErrorService();
-                }
-                break;
+                    return json_encode(array("token" => $results,"cod_error"=>200));
+     
             case 2:
                 $users = new Users($db); 
                 $results = $users->registrarUsuario($params['nombre'], $params['email'], $params['password'],$params['rol_id']);
